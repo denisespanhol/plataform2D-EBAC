@@ -4,11 +4,17 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    #region VARIABLES
     [SerializeField] private Vector2 friction;
-    [SerializeField] private float speed;
+
+    [SerializeField] private float speedWalk;
+    [SerializeField] private float speedRun;
     [SerializeField] private float jumpForce;
 
     private Rigidbody2D _Rb2D;
+
+    private bool _isRunning;
+    #endregion
 
     private void Awake()
     {
@@ -23,17 +29,19 @@ public class Player : MonoBehaviour
 
     private void HandleMovement()
     {
+        _isRunning = Input.GetKey(KeyCode.LeftControl);
+
+        // Conditionals to do the horizontal movement of Walk and Run;
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            // _Rb2D.MovePosition(_Rb2D.position + velocity * Time.deltaTime);
-            _Rb2D.velocity = new Vector2(speed, _Rb2D.velocity.y);
+            _Rb2D.velocity = new Vector2(_isRunning ? speedRun : speedWalk, _Rb2D.velocity.y);
         }
         else if (Input.GetKey(KeyCode.LeftArrow))
         {
-            // _Rb2D.MovePosition(_Rb2D.position - velocity * Time.deltaTime);
-            _Rb2D.velocity = new Vector2(-speed, _Rb2D.velocity.y);
+            _Rb2D.velocity = new Vector2(_isRunning ? -speedRun : -speedWalk, _Rb2D.velocity.y);
         }
 
+        // Conditionals to stabilize the player without friction in the floors;
         if (_Rb2D.velocity.x > 0)
         {
             _Rb2D.velocity += friction;
